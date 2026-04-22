@@ -1287,10 +1287,17 @@
             term.appendChild(document.createTextNode("\n"));
             term.scrollTop = term.scrollHeight;
             if (level === "done") {
+              let remaining = 30;
               const btn = document.createElement("button");
-              btn.textContent = "Show deployment summary →";
               btn.style.cssText = "margin-top:16px;padding:8px 18px;background:var(--ionos-accent);color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:13px;font-weight:600;";
-              btn.onclick = showDeployedState;
+              const update = () => { btn.textContent = `Show deployment summary → (${remaining}s)`; };
+              update();
+              btn.onclick = () => { clearInterval(ticker); showDeployedState(); };
+              const ticker = setInterval(() => {
+                remaining--;
+                if (remaining <= 0) { clearInterval(ticker); showDeployedState(); }
+                else update();
+              }, 1000);
               term.appendChild(document.createTextNode("\n"));
               term.appendChild(btn);
               term.scrollTop = term.scrollHeight;
