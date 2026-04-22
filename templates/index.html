@@ -953,7 +953,7 @@
       const el = document.getElementById("warning-container");
       const needsConfig = state.selected.some(id => {
         const app = APPS.find(a => a.id === id);
-        return (app.parameters || []).some(p => p.required && !p.auto_generate && p.name !== "APP_DOMAIN");
+        return (app.parameters || []).some(p => p.required && !p.auto_generate && p.name !== "APP_DOMAIN" && p.name !== "app_domain");
       });
       if (needsConfig) {
         el.innerHTML = `<div class="warning-box">⚠️ Some selected applications require additional configuration (e.g. admin email). You'll be prompted before deployment.</div>`;
@@ -967,7 +967,7 @@
     }
 
     function calcResources() {
-      const base = OS_BASELINES["ubuntu-26.04"] || { os_min_ram_mb: 512, os_min_disk_mb: 5120 };
+      const base = OS_BASELINES["ubuntu-24.04"] || { os_min_ram_mb: 512, os_min_disk_mb: 5120 };
       let ram = base.os_min_ram_mb;
       let disk = base.os_min_disk_mb;
       state.selected.forEach(id => {
@@ -1028,7 +1028,7 @@
 
       state.selected.forEach(id => {
         const app = APPS.find(a => a.id === id);
-        const params = (app.parameters || []).filter(p => p.name !== "APP_DOMAIN");
+        const params = (app.parameters || []).filter(p => p.name !== "APP_DOMAIN" && p.name !== "app_domain");
         if (!params.length) return;
 
         html += `<div class="app-section">
@@ -1101,7 +1101,7 @@
       for (const id of state.selected) {
         const app = APPS.find(a => a.id === id);
         for (const p of (app.parameters || [])) {
-          if (p.required && !p.auto_generate && p.name !== "APP_DOMAIN") {
+          if (p.required && !p.auto_generate && p.name !== "APP_DOMAIN" && p.name !== "app_domain") {
             const val = (state.values[id] && state.values[id][p.name]) || "";
             if (!val.trim()) { btn.disabled = true; return; }
           }
@@ -1121,7 +1121,7 @@
 
       const payload = {
         base_domain: state.baseDomain,
-        base_os: "ubuntu-26.04",
+        base_os: "ubuntu-24.04",
         credentials: { root_password: "demo-password-change-me" },
         applications: state.selected.map(id => ({
           id: id,
