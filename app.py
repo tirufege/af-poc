@@ -20,7 +20,9 @@ def load_recipes():
     for path in glob.glob(os.path.join(RECIPES_DIR, "*.yaml")):
         with open(path) as f:
             r = yaml.safe_load(f)
-            recipes[r["id"]] = r
+        if "id" not in r:
+            r["id"] = os.path.splitext(os.path.basename(path))[0]
+        recipes[r["id"]] = r
     return recipes
 
 def normalise_catalogue(data):
