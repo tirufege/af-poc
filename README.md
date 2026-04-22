@@ -20,12 +20,19 @@ Open http://localhost:5050
 Run the real AF API alongside the PoC for authentic cloud-init generation with JWE tokens.
 
 ```bash
-# Terminal 1 — af-api
+# Clone all three repos into the same directory
+git clone https://github.com/tirufege/af-poc.git
 git clone https://github.com/IONOS-Server-Technology/af-api.git
+git clone https://github.com/IONOS-Server-Technology/af-recipes.git
+
+# Switch af-api and af-recipes to the feature branches
+cd af-api   && git checkout feature/IF-547-api-implementation && cd ..
+cd af-recipes && git checkout feature/IF-545-recipe-schema-and-first-apps && cd ..
+
+# Terminal 1 — af-api  (af-recipes must be a sibling directory, which it is)
 cd af-api
-git checkout feature/IF-547-api-implementation
 pip install -r requirements.txt
-DEV_MODE=true uvicorn app.main:app --reload --port 8000
+DEV_MODE=true uvicorn app.main:app --port 8000
 
 # Terminal 2 — af-poc
 cd af-poc
@@ -33,11 +40,15 @@ pip install -r requirements.txt
 python app.py
 ```
 
+Open http://localhost:5050
+
 The PoC auto-detects whether af-api is running:
 - **af-api reachable** → proxies `/api/catalogue` and `/api/compose` to `http://localhost:8000/api/v1/`
 - **af-api not running** → falls back to built-in mock (local YAML recipes)
 
 Override the API URL: `AF_API_URL=http://other-host:8000/api/v1 python app.py`
+
+> **Note:** af-api loads recipes from `../af-recipes/recipes` by default. Both repos must be cloned as siblings.
 
 ## What it demonstrates
 
