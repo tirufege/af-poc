@@ -50,6 +50,21 @@ Override the API URL: `AF_API_URL=http://other-host:8000/api/v1 python3 app.py`
 
 > **Note:** af-api loads recipes from `../af-recipes/recipes` by default. Both repos must be cloned as siblings.
 
+## Sharing with others (public URL)
+
+To give someone outside your network a clickable link, use [Cloudflare Quick Tunnels](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/do-more-with-tunnels/trycloudflare/) — no account or firewall changes needed:
+
+```bash
+# Install once
+curl -sLo ~/bin/cloudflared https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64
+chmod +x ~/bin/cloudflared
+
+# Start tunnel (while af-poc is running on port 5050)
+cloudflared tunnel --url http://localhost:5050
+```
+
+Cloudflare prints a public HTTPS URL (e.g. `https://some-random-name.trycloudflare.com`) that anyone can open directly. The URL is temporary and changes on every restart.
+
 ## What it demonstrates
 
 1. **App Catalogue** — 6 apps from af-recipes (n8n, Ollama, OpenClaw, Portainer, Claude Code, Gemini CLI)
