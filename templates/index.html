@@ -838,6 +838,33 @@
       { id: "automation", label: "Automation" }
     ];
 
+    const SIMPLE_ICONS = {
+      "n8n":           "n8n",
+      "ollama":        "ollama",
+      "portainer":     "portainer",
+      "claude-code":   "anthropic",
+      "gemini-cli":    "googlegemini",
+      "adguard-home":  "adguard",
+      "anytype-server":"anytype",
+      "gitea":         "gitea",
+      "home-assistant":"homeassistant",
+      "immich":        "immich",
+      "paperless-ngx": "paperlessngx",
+      "pihole":        "pihole",
+      "runtipi":       "runtipi",
+      "syncthing":     "syncthing",
+      "uptime-kuma":   "uptimekuma",
+      "vaultwarden":   "vaultwarden",
+      "wg-easy":       "wireguard",
+    };
+
+    function getAppIcon(app) {
+      const slug = SIMPLE_ICONS[app.id];
+      if (!slug) return app.display_name.charAt(0).toUpperCase();
+      const fallback = app.display_name.charAt(0).toUpperCase();
+      return `<img src="https://cdn.simpleicons.org/${slug}/ffffff" alt="" width="22" height="22" style="object-fit:contain" onerror="this.parentElement.textContent='${fallback}'">`;
+    }
+
     // ---- Load catalogue ----
     async function loadCatalogue() {
       try {
@@ -901,12 +928,11 @@
         const incompat = isIncompatible(app.id);
         const atLimit = !selected && state.selected.length >= 5;
         const disabled = incompat || atLimit;
-        const initial = app.display_name.charAt(0).toUpperCase();
         return `
           <div class="app-card ${selected ? 'selected' : ''} ${disabled ? 'disabled' : ''}"
                onclick="${disabled ? '' : `toggleApp('${app.id}')`}">
             <div class="app-card-check">✓</div>
-            <div class="app-card-icon">${initial}</div>
+            <div class="app-card-icon">${getAppIcon(app)}</div>
             <div class="app-card-name">${app.display_name}</div>
             <div class="app-card-desc">${app.description}</div>
             <div class="app-card-meta">
