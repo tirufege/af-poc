@@ -993,7 +993,7 @@
     }
 
     function calcResources() {
-      const base = OS_BASELINES["ubuntu-24.04"] || { os_min_ram_mb: 512, os_min_disk_mb: 5120 };
+      const base = OS_BASELINES["ubuntu-26.04"] || { os_min_ram_mb: 512, os_min_disk_mb: 5120 };
       let ram = base.os_min_ram_mb;
       let disk = base.os_min_disk_mb;
       state.selected.forEach(id => {
@@ -1147,7 +1147,7 @@
 
       const payload = {
         base_domain: state.baseDomain,
-        base_os: "ubuntu-24.04",
+        base_os: "ubuntu-26.04",
         credentials: { root_password: "demo-password-change-me" },
         applications: state.selected.map(id => ({
           id: id,
