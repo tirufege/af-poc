@@ -20,18 +20,22 @@ Open http://localhost:5050
 Run the real AF API alongside the PoC for authentic cloud-init generation with JWE tokens.
 
 ```bash
-# Clone all three repos into the same directory
+# Clone all repos into the same directory
 git clone https://github.com/tirufege/af-poc.git
 git clone https://github.com/IONOS-Server-Technology/af-api.git
 git clone https://github.com/IONOS-Server-Technology/af-recipes.git
+git clone https://github.com/IONOS-Server-Technology/af-core.git
 
-# Switch af-api and af-recipes to the feature branches
-cd af-api   && git checkout feature/IF-547-api-implementation && cd ..
-cd af-recipes && git checkout feature/IF-545-recipe-schema-and-first-apps && cd ..
+# Switch to the feature branches
+cd af-api     && git checkout feature/IF-547-api-implementation && cd ..
+cd af-recipes && git checkout feature/IF-545-more-selfhosted-recipes && cd ..
+cd af-core    && git checkout feature/IF-547-shared-library && cd ..
 
-# Terminal 1 — af-api  (af-recipes must be a sibling directory, which it is)
+# Terminal 1 — af-api
+# af-recipes must be a sibling directory; af-core is installed as a local pip dependency
 cd af-api
-pip install -r requirements.txt
+pip install -r requirements.txt   # pulls af-core automatically if listed as git dep,
+pip install -e ../af-core          # or install locally if cloned as sibling
 DEV_MODE=true uvicorn app.main:app --port 8000
 
 # Terminal 2 — af-poc
@@ -48,7 +52,7 @@ The PoC auto-detects whether af-api is running:
 
 Override the API URL: `AF_API_URL=http://other-host:8000/api/v1 python3 app.py`
 
-> **Note:** af-api loads recipes from `../af-recipes/recipes` by default. Both repos must be cloned as siblings.
+> **Note:** af-api loads recipes from `../af-recipes/recipes` by default. All repos must be cloned as siblings. af-core is a shared library extracted from af-api — install it once per virtualenv.
 
 ## Sharing with others (public URL)
 
@@ -67,14 +71,15 @@ Cloudflare prints a public HTTPS URL (e.g. `https://some-random-name.trycloudfla
 
 ## What it demonstrates
 
-1. **App Catalogue** — 6 apps from af-recipes (n8n, Ollama, OpenClaw, Portainer, Claude Code, Gemini CLI)
-2. **Selection & Config** — max 5 apps, incompatibility handling (ollama ↔ openclaw), per-app parameter input
+1. **App Catalogue** — 22 apps from af-recipes (n8n, Ollama, Gitea, Immich, Vaultwarden, Pi-hole, and more)
+2. **Selection & Config** — max 5 apps, incompatibility handling (e.g. Pi-hole ↔ AdGuard Home), per-app parameter input
 3. **Resource Calculation** — OS baseline + app requirements in the summary panel
 4. **cloud-init Generation** — POST /api/compose returns a ready-to-use cloud-init YAML
 5. **Server Simulation** — animated terminal output simulating the bootstrap process
 
 ## Related
 
-- [af-api](https://github.com/IONOS-Server-Technology/af-api) — Real AF API (FastAPI, JWE tokens)
-- [af-recipes](https://github.com/IONOS-Server-Technology/af-recipes) — App recipes (branch: feature/IF-545-recipe-schema-and-first-apps)
+- [af-api](https://github.com/IONOS-Server-Technology/af-api) — Real AF API (FastAPI, JWE tokens, branch: feature/IF-547-api-implementation)
+- [af-core](https://github.com/IONOS-Server-Technology/af-core) — Shared library: recipe loading, rendering, validation (branch: feature/IF-547-shared-library)
+- [af-recipes](https://github.com/IONOS-Server-Technology/af-recipes) — App recipes (branch: feature/IF-545-more-selfhosted-recipes)
 - [af-coolify-poc](https://github.com/tirufege/af-coolify-poc) — Previous PoC (Coolify-based)
