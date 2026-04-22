@@ -1,0 +1,44 @@
+id: openclaw
+name: openclaw
+display_name: OpenClaw
+description: Multi-model AI gateway with Telegram integration
+categories: [ai, automation]
+app_version: 2026.2.26
+recipe_type: docker-compose
+upstream_url: https://github.com/openclaw/openclaw
+app_min_ram_mb: 2048
+app_min_disk_mb: 20480
+supported_os: [ubuntu-26.04]
+incompatible_with_apps: [ollama]
+parameters:
+  - name: APP_DOMAIN
+    display_name: Domain
+    type: domain
+    required: true
+    description: Domain for OpenClaw gateway
+  - name: OPENCLAW_GATEWAY_TOKEN
+    display_name: Gateway Token
+    type: password
+    required: true
+    auto_generate: true
+    description: Secret token for OpenClaw API access
+  - name: ANTHROPIC_API_KEY
+    display_name: Anthropic API Key
+    type: password
+    required: false
+    description: Anthropic Claude API key (optional)
+  - name: OPENAI_API_KEY
+    display_name: OpenAI API Key
+    type: password
+    required: false
+    description: OpenAI API key (optional)
+  - name: TELEGRAM_BOT_TOKEN
+    display_name: Telegram Bot Token
+    type: password
+    required: false
+    description: Telegram bot token for chat integration
+ports:
+  - port: 18789
+    protocol: tcp
+    public: true
+    description: OpenClaw API

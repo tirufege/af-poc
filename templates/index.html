@@ -1,0 +1,1327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>IONOS Cloud Panel — Application Factory</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --ionos-blue: #003D8F;
+      --ionos-blue-dark: #002A66;
+      --ionos-accent: #1A73E8;
+      --ionos-teal: #00B0B9;
+      --ionos-bg: #F5F7FA;
+      --ionos-surface: #FFFFFF;
+      --ionos-border: #E1E5EB;
+      --ionos-text: #1F2933;
+      --ionos-text-muted: #6B7280;
+      --ionos-success: #10B981;
+      --ionos-warning: #F59E0B;
+      --ionos-error: #EF4444;
+      --radius: 6px;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-md: 0 2px 6px rgba(0,0,0,0.08);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-size: 14px;
+      color: var(--ionos-text);
+      background: var(--ionos-bg);
+      line-height: 1.5;
+    }
+
+    /* Topbar */
+    .topbar {
+      background: var(--ionos-blue);
+      color: white;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      gap: 24px;
+      box-shadow: var(--shadow-md);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .topbar-logo {
+      font-weight: 700;
+      font-size: 16px;
+      letter-spacing: -0.3px;
+    }
+    .topbar-nav {
+      display: flex;
+      gap: 4px;
+      flex: 1;
+    }
+    .topbar-nav a {
+      color: rgba(255,255,255,0.85);
+      text-decoration: none;
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+    .topbar-nav a:hover { background: rgba(255,255,255,0.1); color: white; }
+    .topbar-nav a.active { background: rgba(255,255,255,0.15); color: white; }
+    .topbar-user {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+    }
+    .topbar-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--ionos-teal);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 12px;
+    }
+
+    /* Layout */
+    .layout {
+      display: grid;
+      grid-template-columns: 240px 1fr 340px;
+      min-height: calc(100vh - 48px);
+    }
+
+    /* Sidebar */
+    .sidebar {
+      background: var(--ionos-surface);
+      border-right: 1px solid var(--ionos-border);
+      padding: 16px 0;
+    }
+    .sidebar-section {
+      margin-bottom: 8px;
+    }
+    .sidebar-title {
+      padding: 8px 20px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--ionos-text-muted);
+    }
+    .sidebar-item {
+      padding: 8px 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--ionos-text);
+      text-decoration: none;
+      font-size: 13px;
+      cursor: pointer;
+      border-left: 3px solid transparent;
+    }
+    .sidebar-item:hover { background: var(--ionos-bg); }
+    .sidebar-item.active {
+      background: rgba(26, 115, 232, 0.08);
+      border-left-color: var(--ionos-accent);
+      color: var(--ionos-accent);
+      font-weight: 500;
+    }
+    .sidebar-item .icon { width: 16px; opacity: 0.7; }
+
+    /* Main */
+    .main {
+      padding: 24px 32px;
+      overflow-y: auto;
+    }
+    .main h1 {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+
+    /* Card */
+    .card {
+      background: var(--ionos-surface);
+      border: 1px solid var(--ionos-border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 20px;
+    }
+    .card-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--ionos-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .card-title {
+      font-size: 16px;
+      font-weight: 600;
+    }
+    .card-body {
+      padding: 20px;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 2px;
+      border-bottom: 1px solid var(--ionos-border);
+      margin-bottom: 20px;
+    }
+    .tab {
+      padding: 10px 16px;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--ionos-text-muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .tab:hover { color: var(--ionos-text); }
+    .tab.active {
+      color: var(--ionos-accent);
+      border-bottom-color: var(--ionos-accent);
+    }
+    .badge-new {
+      background: var(--ionos-accent);
+      color: white;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    /* Info banner */
+    .info-banner {
+      background: rgba(26, 115, 232, 0.08);
+      border: 1px solid rgba(26, 115, 232, 0.2);
+      border-radius: var(--radius);
+      padding: 12px 16px;
+      margin-bottom: 20px;
+      font-size: 13px;
+      color: #0b3e80;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+    .info-banner .icon { flex-shrink: 0; }
+
+    /* Filter chips */
+    .filter-chips {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    .chip {
+      padding: 6px 14px;
+      border-radius: 14px;
+      background: var(--ionos-bg);
+      border: 1px solid var(--ionos-border);
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      color: var(--ionos-text);
+    }
+    .chip:hover { background: #ECEFF3; }
+    .chip.active {
+      background: var(--ionos-accent);
+      color: white;
+      border-color: var(--ionos-accent);
+    }
+
+    /* Apps grid */
+    .apps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+    }
+    .app-card {
+      border: 1.5px solid var(--ionos-border);
+      border-radius: var(--radius);
+      padding: 14px;
+      cursor: pointer;
+      background: var(--ionos-surface);
+      transition: all 0.15s ease;
+      position: relative;
+    }
+    .app-card:hover {
+      border-color: var(--ionos-accent);
+      box-shadow: var(--shadow-md);
+    }
+    .app-card.selected {
+      border-color: var(--ionos-accent);
+      background: rgba(26, 115, 232, 0.04);
+    }
+    .app-card.disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      background: var(--ionos-bg);
+    }
+    .app-card-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 6px;
+      background: linear-gradient(135deg, var(--ionos-accent), var(--ionos-teal));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+    .app-card-name {
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 3px;
+    }
+    .app-card-desc {
+      font-size: 12px;
+      color: var(--ionos-text-muted);
+      line-height: 1.4;
+      min-height: 32px;
+    }
+    .app-card-meta {
+      font-size: 11px;
+      color: var(--ionos-text-muted);
+      margin-top: 8px;
+      display: flex;
+      gap: 8px;
+    }
+    .app-card-check {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--ionos-accent);
+      color: white;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+    }
+    .app-card.selected .app-card-check { display: flex; }
+
+    /* Selection footer */
+    .selection-footer {
+      margin-top: 20px;
+      padding: 12px 16px;
+      background: var(--ionos-bg);
+      border-radius: var(--radius);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+    }
+    .selection-footer .clear-btn {
+      background: none;
+      border: none;
+      color: var(--ionos-accent);
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    /* Warning */
+    .warning-box {
+      background: #FEF3C7;
+      border: 1px solid #FBBF24;
+      border-radius: var(--radius);
+      padding: 12px 16px;
+      margin-top: 12px;
+      font-size: 13px;
+      color: #92400E;
+    }
+
+    /* Loading state */
+    .loading {
+      padding: 40px;
+      text-align: center;
+      color: var(--ionos-text-muted);
+      font-size: 13px;
+    }
+
+    /* Summary panel */
+    .summary {
+      background: var(--ionos-surface);
+      border-left: 1px solid var(--ionos-border);
+      padding: 24px;
+      position: sticky;
+      top: 48px;
+      height: calc(100vh - 48px);
+      overflow-y: auto;
+    }
+    .summary h2 {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+    .summary-section {
+      padding: 14px 0;
+      border-bottom: 1px solid var(--ionos-border);
+    }
+    .summary-section:last-of-type { border-bottom: none; }
+    .summary-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--ionos-text-muted);
+      margin-bottom: 6px;
+    }
+    .summary-value {
+      font-size: 13px;
+      font-weight: 500;
+    }
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 4px 0;
+      font-size: 13px;
+    }
+    .summary-row .muted { color: var(--ionos-text-muted); }
+
+    .app-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+    }
+    .app-chip {
+      background: rgba(26, 115, 232, 0.1);
+      color: var(--ionos-accent);
+      padding: 3px 8px;
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 500;
+    }
+    .app-chip-empty {
+      color: var(--ionos-text-muted);
+      font-size: 12px;
+      font-style: italic;
+    }
+
+    /* Button */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 10px 18px;
+      border-radius: var(--radius);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.15s ease;
+      text-decoration: none;
+    }
+    .btn-primary {
+      background: var(--ionos-accent);
+      color: white;
+      width: 100%;
+    }
+    .btn-primary:hover:not(:disabled) { background: #1557B0; }
+    .btn-primary:disabled {
+      background: #CBD5E0;
+      cursor: not-allowed;
+    }
+    .btn-secondary {
+      background: var(--ionos-surface);
+      color: var(--ionos-text);
+      border-color: var(--ionos-border);
+    }
+    .btn-secondary:hover { background: var(--ionos-bg); }
+    .btn-ghost {
+      background: transparent;
+      color: var(--ionos-accent);
+    }
+    .btn-ghost:hover { background: rgba(26,115,232,0.08); }
+
+    /* Modal */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.55);
+      backdrop-filter: blur(2px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+    .modal-backdrop.open { display: flex; }
+    .modal {
+      background: var(--ionos-surface);
+      border-radius: 8px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+      width: 100%;
+      max-width: 680px;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .modal-lg { max-width: 900px; }
+    .modal-header {
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--ionos-border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .modal-header h2 {
+      font-size: 17px;
+      font-weight: 600;
+    }
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      color: var(--ionos-text-muted);
+      padding: 4px 8px;
+    }
+    .modal-body {
+      padding: 20px 24px;
+      overflow-y: auto;
+      flex: 1;
+    }
+    .modal-footer {
+      padding: 14px 24px;
+      border-top: 1px solid var(--ionos-border);
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    /* Forms */
+    .field-group {
+      margin-bottom: 16px;
+    }
+    .field-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 5px;
+      color: var(--ionos-text);
+    }
+    .field-label .required { color: var(--ionos-error); }
+    .field-input {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid var(--ionos-border);
+      border-radius: var(--radius);
+      font-size: 13px;
+      font-family: inherit;
+      color: var(--ionos-text);
+      background: var(--ionos-surface);
+    }
+    .field-input:focus {
+      outline: none;
+      border-color: var(--ionos-accent);
+      box-shadow: 0 0 0 3px rgba(26,115,232,0.12);
+    }
+    .field-help {
+      font-size: 11px;
+      color: var(--ionos-text-muted);
+      margin-top: 4px;
+    }
+    .field-checkbox {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 6px;
+      font-size: 12px;
+      color: var(--ionos-text-muted);
+    }
+    .field-error {
+      color: var(--ionos-error);
+      font-size: 12px;
+      margin-top: 4px;
+    }
+
+    .app-section {
+      padding: 14px 0;
+      border-bottom: 1px solid var(--ionos-border);
+    }
+    .app-section:last-child { border-bottom: none; padding-bottom: 0; }
+    .app-section-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .app-section-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 4px;
+      background: linear-gradient(135deg, var(--ionos-accent), var(--ionos-teal));
+      color: white;
+      font-size: 11px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Terminal */
+    .terminal {
+      background: #0D1117;
+      color: #58D68D;
+      font-family: "SF Mono", Monaco, Consolas, "Courier New", monospace;
+      font-size: 12.5px;
+      line-height: 1.6;
+      padding: 16px;
+      border-radius: var(--radius);
+      height: 420px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .terminal-line { display: block; padding: 1px 0; }
+    .terminal-line.info { color: #E6EDF3; }
+    .terminal-line.cmd { color: #7EE787; }
+    .terminal-line.cmd::before { content: "$ "; color: #58D68D; }
+    .terminal-line.ok { color: #7EE787; }
+    .terminal-line.ok::before { content: "✔ "; color: #56D364; }
+    .terminal-line.url { color: #79C0FF; }
+    .terminal-line.done {
+      color: #FACC15;
+      font-weight: 700;
+      margin-top: 8px;
+    }
+
+    .cloud-init-box {
+      background: #F6F8FA;
+      border: 1px solid var(--ionos-border);
+      border-radius: var(--radius);
+      font-family: "SF Mono", Monaco, Consolas, monospace;
+      font-size: 12px;
+      padding: 14px;
+      max-height: 340px;
+      overflow: auto;
+      white-space: pre-wrap;
+      color: #1F2933;
+      position: relative;
+    }
+    .copy-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      padding: 4px 10px;
+      background: white;
+      border: 1px solid var(--ionos-border);
+      border-radius: 4px;
+      font-size: 11px;
+      cursor: pointer;
+      color: var(--ionos-accent);
+    }
+    .copy-btn:hover { background: var(--ionos-bg); }
+
+    .deployed-state {
+      text-align: center;
+      padding: 20px 0;
+    }
+    .deployed-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: var(--ionos-success);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 30px;
+      margin: 0 auto 14px;
+    }
+    .deployed-title {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .deployed-subtitle {
+      color: var(--ionos-text-muted);
+      font-size: 13px;
+      margin-bottom: 20px;
+    }
+    .url-card {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--ionos-bg);
+      padding: 10px 14px;
+      border-radius: var(--radius);
+      margin-bottom: 8px;
+    }
+    .url-card-app {
+      font-weight: 600;
+      font-size: 13px;
+    }
+    .url-card-url {
+      font-family: monospace;
+      font-size: 12px;
+      color: var(--ionos-accent);
+    }
+
+    .error-list {
+      background: #FEF2F2;
+      border: 1px solid #FECACA;
+      border-radius: var(--radius);
+      padding: 12px 16px;
+      margin-bottom: 16px;
+      color: #991B1B;
+      font-size: 12px;
+    }
+    .error-list ul {
+      padding-left: 18px;
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="topbar-logo">IONOS Cloud Panel</div>
+    <div class="topbar-nav">
+      <a href="#">Home</a>
+      <a href="#" class="active">Infrastructure</a>
+      <a href="#">Network</a>
+      <a href="#">Storage</a>
+      <a href="#">Security</a>
+      <a href="#">Monitoring</a>
+    </div>
+    <div class="topbar-user">
+      <span>braemert@strato.de</span>
+      <div class="topbar-avatar">AB</div>
+    </div>
+  </div>
+
+  <div class="layout">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-title">Infrastructure</div>
+        <a class="sidebar-item">Servers</a>
+        <a class="sidebar-item active">Images</a>
+        <a class="sidebar-item">Snapshots</a>
+        <a class="sidebar-item">Volumes</a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-title">Network</div>
+        <a class="sidebar-item">IPs</a>
+        <a class="sidebar-item">Firewall</a>
+        <a class="sidebar-item">DNS</a>
+      </div>
+    </div>
+
+    <!-- Main -->
+    <div class="main">
+      <h1>Servers</h1>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Reinstall Image</div>
+        </div>
+        <div class="card-body">
+          <div class="tabs">
+            <div class="tab active">OS + Apps <span class="badge-new">NEW</span></div>
+            <div class="tab">Base OS</div>
+          </div>
+
+          <div class="info-banner">
+            <span class="icon">ℹ️</span>
+            <div>
+              <strong>Application Factory</strong> — Pick up to 5 ready-to-run applications that will be installed automatically on top of your chosen OS.
+              Credentials and URLs are generated during installation.
+            </div>
+          </div>
+
+          <div class="filter-chips" id="filters"></div>
+
+          <div id="apps-container">
+            <div class="loading">Loading catalogue…</div>
+          </div>
+
+          <div id="selection-footer"></div>
+          <div id="warning-container"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Summary -->
+    <div class="summary">
+      <h2>Configuration Summary</h2>
+
+      <div class="summary-section">
+        <div class="summary-label">Server</div>
+        <div class="summary-value">VPS M (Demo)</div>
+        <div class="summary-row"><span class="muted">CPU</span><span>2 vCores</span></div>
+        <div class="summary-row"><span class="muted">RAM</span><span>4 GB</span></div>
+        <div class="summary-row"><span class="muted">Storage</span><span>160 GB SSD</span></div>
+      </div>
+
+      <div class="summary-section">
+        <div class="summary-label">Operating System</div>
+        <div class="summary-value">Ubuntu 26.04 LTS</div>
+      </div>
+
+      <div class="summary-section">
+        <div class="summary-label">Selected Applications</div>
+        <div class="app-chips" id="summary-apps">
+          <span class="app-chip-empty">No applications selected</span>
+        </div>
+      </div>
+
+      <div class="summary-section">
+        <div class="summary-label">Estimated Requirements</div>
+        <div class="summary-row"><span class="muted">RAM</span><span id="sum-ram">512 MB</span></div>
+        <div class="summary-row"><span class="muted">Disk</span><span id="sum-disk">5 GB</span></div>
+      </div>
+
+      <div style="margin-top: 20px;">
+        <button class="btn btn-primary" id="reinstall-btn" disabled>Reinstall Image</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Config Modal -->
+  <div class="modal-backdrop" id="config-modal">
+    <div class="modal modal-lg">
+      <div class="modal-header">
+        <h2>Configure Applications</h2>
+        <button class="modal-close" onclick="closeModal('config-modal')">×</button>
+      </div>
+      <div class="modal-body" id="config-modal-body"></div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('config-modal')">Cancel</button>
+        <button class="btn btn-primary" id="install-btn" style="width: auto;" onclick="finishInstall()">Install</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Result Modal -->
+  <div class="modal-backdrop" id="result-modal">
+    <div class="modal modal-lg">
+      <div class="modal-header">
+        <h2 id="result-modal-title">Deployment</h2>
+        <button class="modal-close" onclick="closeModal('result-modal')">×</button>
+      </div>
+      <div class="modal-body" id="result-modal-body"></div>
+      <div class="modal-footer" id="result-modal-footer"></div>
+    </div>
+  </div>
+
+  <script>
+    // ---- State ----
+    let APPS = [];
+    let OS_BASELINES = {};
+    const state = {
+      selected: [],            // [appId]
+      values: {},              // { appId: { paramName: value } }
+      baseDomain: "",
+      filter: "all",
+      useForAll: { email: "", password: "" }
+    };
+
+    const CATEGORY_FILTERS = [
+      { id: "all", label: "All" },
+      { id: "developer-tools", label: "Developer Tools" },
+      { id: "ai", label: "AI & Automation" },
+      { id: "infrastructure", label: "Infrastructure" },
+      { id: "automation", label: "Automation" }
+    ];
+
+    // ---- Load catalogue ----
+    async function loadCatalogue() {
+      try {
+        const res = await fetch("/api/catalogue");
+        const data = await res.json();
+        APPS = data.applications;
+        OS_BASELINES = data.os_baselines;
+        render();
+      } catch (e) {
+        document.getElementById("apps-container").innerHTML =
+          `<div class="loading" style="color:var(--ionos-error)">Failed to load catalogue: ${e.message}</div>`;
+      }
+    }
+
+    // ---- Rendering ----
+    function render() {
+      renderFilters();
+      renderApps();
+      renderFooter();
+      renderWarning();
+      renderSummary();
+    }
+
+    function renderFilters() {
+      const el = document.getElementById("filters");
+      el.innerHTML = CATEGORY_FILTERS.map(f =>
+        `<div class="chip ${state.filter === f.id ? 'active' : ''}" onclick="setFilter('${f.id}')">${f.label}</div>`
+      ).join("");
+    }
+
+    function setFilter(id) {
+      state.filter = id;
+      render();
+    }
+
+    function isIncompatible(appId) {
+      if (state.selected.includes(appId)) return false;
+      const app = APPS.find(a => a.id === appId);
+      if (!app) return false;
+      for (const selId of state.selected) {
+        const sel = APPS.find(a => a.id === selId);
+        if (!sel) continue;
+        if ((sel.incompatible_with_apps || []).includes(appId)) return true;
+        if ((app.incompatible_with_apps || []).includes(selId)) return true;
+      }
+      return false;
+    }
+
+    function renderApps() {
+      const el = document.getElementById("apps-container");
+      let list = APPS;
+      if (state.filter !== "all") {
+        list = APPS.filter(a => (a.categories || []).includes(state.filter));
+      }
+      if (!list.length) {
+        el.innerHTML = `<div class="loading">No apps in this category.</div>`;
+        return;
+      }
+      el.innerHTML = `<div class="apps-grid">${list.map(app => {
+        const selected = state.selected.includes(app.id);
+        const incompat = isIncompatible(app.id);
+        const atLimit = !selected && state.selected.length >= 5;
+        const disabled = incompat || atLimit;
+        const initial = app.display_name.charAt(0).toUpperCase();
+        return `
+          <div class="app-card ${selected ? 'selected' : ''} ${disabled ? 'disabled' : ''}"
+               onclick="${disabled ? '' : `toggleApp('${app.id}')`}">
+            <div class="app-card-check">✓</div>
+            <div class="app-card-icon">${initial}</div>
+            <div class="app-card-name">${app.display_name}</div>
+            <div class="app-card-desc">${app.description}</div>
+            <div class="app-card-meta">
+              <span>v${app.app_version}</span>
+              <span>·</span>
+              <span>${app.app_min_ram_mb >= 1024 ? (app.app_min_ram_mb/1024) + 'GB' : app.app_min_ram_mb + 'MB'}</span>
+            </div>
+          </div>
+        `;
+      }).join("")}</div>`;
+    }
+
+    function toggleApp(id) {
+      const i = state.selected.indexOf(id);
+      if (i >= 0) {
+        state.selected.splice(i, 1);
+        delete state.values[id];
+      } else {
+        if (state.selected.length >= 5) return;
+        state.selected.push(id);
+        state.values[id] = {};
+      }
+      render();
+    }
+
+    function clearSelection() {
+      state.selected = [];
+      state.values = {};
+      render();
+    }
+
+    function renderFooter() {
+      const el = document.getElementById("selection-footer");
+      if (!state.selected.length) { el.innerHTML = ""; return; }
+      el.innerHTML = `
+        <div class="selection-footer">
+          <span><strong>${state.selected.length}</strong> / 5 applications selected</span>
+          <button class="clear-btn" onclick="clearSelection()">Clear all</button>
+        </div>
+      `;
+    }
+
+    function renderWarning() {
+      const el = document.getElementById("warning-container");
+      const needsConfig = state.selected.some(id => {
+        const app = APPS.find(a => a.id === id);
+        return (app.parameters || []).some(p => p.required && !p.auto_generate && p.name !== "APP_DOMAIN");
+      });
+      if (needsConfig) {
+        el.innerHTML = `<div class="warning-box">⚠️ Some selected applications require additional configuration (e.g. admin email). You'll be prompted before deployment.</div>`;
+      } else {
+        el.innerHTML = "";
+      }
+    }
+
+    function formatMb(mb) {
+      return mb >= 1024 ? `${(mb/1024).toFixed(1)} GB` : `${mb} MB`;
+    }
+
+    function calcResources() {
+      const base = OS_BASELINES["ubuntu-26.04"] || { os_min_ram_mb: 512, os_min_disk_mb: 5120 };
+      let ram = base.os_min_ram_mb;
+      let disk = base.os_min_disk_mb;
+      state.selected.forEach(id => {
+        const app = APPS.find(a => a.id === id);
+        if (app) {
+          ram += app.app_min_ram_mb || 0;
+          disk += app.app_min_disk_mb || 0;
+        }
+      });
+      return { ram: formatMb(ram), disk: formatMb(disk) };
+    }
+
+    function renderSummary() {
+      const el = document.getElementById("summary-apps");
+      if (!state.selected.length) {
+        el.innerHTML = `<span class="app-chip-empty">No applications selected</span>`;
+      } else {
+        el.innerHTML = state.selected.map(id => {
+          const app = APPS.find(a => a.id === id);
+          return `<span class="app-chip">${app ? app.display_name : id}</span>`;
+        }).join("");
+      }
+      const r = calcResources();
+      document.getElementById("sum-ram").textContent = r.ram;
+      document.getElementById("sum-disk").textContent = r.disk;
+
+      const btn = document.getElementById("reinstall-btn");
+      btn.disabled = state.selected.length === 0;
+      btn.onclick = openConfigModal;
+    }
+
+    // ---- Config Modal ----
+    function openConfigModal() {
+      const body = document.getElementById("config-modal-body");
+      let html = `
+        <div class="field-group">
+          <label class="field-label">Base Domain <span class="required">*</span></label>
+          <input class="field-input" id="input-base-domain" value="${state.baseDomain || ''}"
+                 placeholder="h123456.stratoserver.net" oninput="state.baseDomain = this.value; updateInstallBtn();">
+          <div class="field-help">Root domain for all apps. Per-app subdomains are derived automatically (e.g. n8n.{domain}).</div>
+        </div>
+      `;
+
+      // Shared "Use for all" for email/password
+      const hasEmailFields = state.selected.some(id => {
+        const app = APPS.find(a => a.id === id);
+        return (app.parameters || []).some(p => p.type === "email" && p.required);
+      });
+      if (hasEmailFields) {
+        html += `
+          <div class="field-group">
+            <label class="field-label">Default admin email (used for all apps that require one)</label>
+            <input class="field-input" id="shared-email" value="${state.useForAll.email}"
+                   placeholder="admin@example.com" oninput="applySharedEmail(this.value)">
+          </div>
+        `;
+      }
+
+      state.selected.forEach(id => {
+        const app = APPS.find(a => a.id === id);
+        const params = (app.parameters || []).filter(p => p.name !== "APP_DOMAIN");
+        if (!params.length) return;
+
+        html += `<div class="app-section">
+          <div class="app-section-title">
+            <div class="app-section-icon">${app.display_name.charAt(0).toUpperCase()}</div>
+            ${app.display_name}
+          </div>`;
+
+        params.forEach(p => {
+          const val = (state.values[id] && state.values[id][p.name]) || "";
+          const required = p.required && !p.auto_generate;
+          let helpText = p.description || "";
+          if (p.auto_generate) helpText += " (auto-generated if empty)";
+          if (p.default) helpText += ` Default: ${p.default}`;
+
+          html += `
+            <div class="field-group">
+              <label class="field-label">
+                ${p.display_name}
+                ${required ? '<span class="required">*</span>' : ''}
+                ${p.auto_generate ? '<span style="color:var(--ionos-text-muted); font-weight:400; font-size:11px;"> (auto)</span>' : ''}
+              </label>
+              <input class="field-input" type="${p.type === 'password' ? 'password' : (p.type === 'email' ? 'email' : 'text')}"
+                     value="${val}"
+                     placeholder="${p.default || ''}"
+                     oninput="setValue('${id}', '${p.name}', this.value)"
+                     data-app="${id}" data-param="${p.name}" data-type="${p.type}">
+              <div class="field-help">${helpText}</div>
+            </div>
+          `;
+        });
+
+        html += `</div>`;
+      });
+
+      body.innerHTML = html;
+      document.getElementById("config-modal").classList.add("open");
+      updateInstallBtn();
+    }
+
+    function setValue(appId, paramName, value) {
+      if (!state.values[appId]) state.values[appId] = {};
+      state.values[appId][paramName] = value;
+      updateInstallBtn();
+    }
+
+    function applySharedEmail(email) {
+      state.useForAll.email = email;
+      state.selected.forEach(id => {
+        const app = APPS.find(a => a.id === id);
+        (app.parameters || []).forEach(p => {
+          if (p.type === "email" && p.required) {
+            if (!state.values[id]) state.values[id] = {};
+            state.values[id][p.name] = email;
+            const input = document.querySelector(`input[data-app="${id}"][data-param="${p.name}"]`);
+            if (input) input.value = email;
+          }
+        });
+      });
+      updateInstallBtn();
+    }
+
+    function updateInstallBtn() {
+      const btn = document.getElementById("install-btn");
+      if (!state.baseDomain || !state.baseDomain.trim()) {
+        btn.disabled = true;
+        return;
+      }
+      // All required non-auto params must be filled (skip APP_DOMAIN)
+      for (const id of state.selected) {
+        const app = APPS.find(a => a.id === id);
+        for (const p of (app.parameters || [])) {
+          if (p.required && !p.auto_generate && p.name !== "APP_DOMAIN") {
+            const val = (state.values[id] && state.values[id][p.name]) || "";
+            if (!val.trim()) { btn.disabled = true; return; }
+          }
+        }
+      }
+      btn.disabled = false;
+    }
+
+    function openModal(id) { document.getElementById(id).classList.add("open"); }
+    function closeModal(id) { document.getElementById(id).classList.remove("open"); }
+
+    // ---- Compose flow ----
+    async function finishInstall() {
+      const btn = document.getElementById("install-btn");
+      btn.disabled = true;
+      btn.textContent = "Composing…";
+
+      const payload = {
+        base_domain: state.baseDomain,
+        base_os: "ubuntu-26.04",
+        credentials: { root_password: "demo-password-change-me" },
+        applications: state.selected.map(id => ({
+          id: id,
+          parameters: state.values[id] || {}
+        }))
+      };
+
+      try {
+        const res = await fetch("/api/compose", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) {
+          const err = await res.json();
+          showComposeError(err);
+          btn.disabled = false;
+          btn.textContent = "Install";
+          return;
+        }
+
+        const data = await res.json();
+        closeModal("config-modal");
+        showComposeResult(data);
+      } catch (e) {
+        showComposeError({ message: e.message });
+      } finally {
+        btn.textContent = "Install";
+      }
+    }
+
+    function showComposeError(err) {
+      const details = err.details || {};
+      const allErrors = [
+        ...(details.errors || []).map(e => `${e.code}: ${JSON.stringify(e)}`),
+        ...(details.field_errors || []).map(e => `${e.app} — ${e.message}`)
+      ];
+      const body = document.getElementById("config-modal-body");
+      const existing = document.querySelector(".error-list");
+      if (existing) existing.remove();
+      const errBox = document.createElement("div");
+      errBox.className = "error-list";
+      errBox.innerHTML = `<strong>Validation error:</strong><ul>${allErrors.map(e => `<li>${e}</li>`).join("")}</ul>`;
+      body.prepend(errBox);
+    }
+
+    function showComposeResult(data) {
+      const body = document.getElementById("result-modal-body");
+      const footer = document.getElementById("result-modal-footer");
+      document.getElementById("result-modal-title").textContent = "Deployment Ready";
+
+      body.innerHTML = `
+        <div style="margin-bottom: 16px;">
+          <h3 style="font-size:14px; font-weight:600; margin-bottom:6px;">Generated cloud-init</h3>
+          <p style="font-size:12px; color:var(--ionos-text-muted); margin-bottom:10px;">
+            This YAML would be passed to the new server on first boot.
+          </p>
+          <div class="cloud-init-box" id="cloud-init-text">
+            <button class="copy-btn" onclick="copyCloudInit()">Copy</button>
+            <pre style="margin:0;">${escapeHtml(data.cloud_init)}</pre>
+          </div>
+        </div>
+
+        <div>
+          <h3 style="font-size:14px; font-weight:600; margin-bottom:6px;">Planned HTTP Routes</h3>
+          ${(data.network.http_routes || []).map(r => {
+            const app = APPS.find(a => a.id === r.application);
+            return `<div class="url-card">
+              <span class="url-card-app">${app ? app.display_name : r.application}</span>
+              <span class="url-card-url">${r.url}</span>
+            </div>`;
+          }).join("") || '<div class="field-help">No HTTP routes (native apps only).</div>'}
+        </div>
+      `;
+
+      footer.innerHTML = `
+        <button class="btn btn-secondary" onclick="closeModal('result-modal')">Close</button>
+        <button class="btn btn-primary" style="width:auto;" onclick="startBootstrapSimulation()">Simulate Installation →</button>
+      `;
+
+      // Store for simulation
+      window._lastCompose = data;
+
+      openModal("result-modal");
+    }
+
+    function escapeHtml(s) {
+      return (s || "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+    }
+
+    function copyCloudInit() {
+      const text = window._lastCompose?.cloud_init || "";
+      navigator.clipboard.writeText(text).then(() => {
+        const btn = document.querySelector(".copy-btn");
+        if (btn) { btn.textContent = "Copied!"; setTimeout(() => btn.textContent = "Copy", 1500); }
+      });
+    }
+
+    // ---- Bootstrap simulation ----
+    async function startBootstrapSimulation() {
+      const body = document.getElementById("result-modal-body");
+      const footer = document.getElementById("result-modal-footer");
+      document.getElementById("result-modal-title").textContent = "Server Bootstrap (simulated)";
+
+      body.innerHTML = `<div class="terminal" id="terminal"></div>`;
+      footer.innerHTML = `<button class="btn btn-secondary" disabled>Running…</button>`;
+
+      const term = document.getElementById("terminal");
+      const appIds = state.selected.slice();
+
+      try {
+        const res = await fetch("/api/simulate-bootstrap", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ app_ids: appIds })
+        });
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = "";
+
+        while (true) {
+          const { value, done } = await reader.read();
+          if (done) break;
+          buffer += decoder.decode(value, { stream: true });
+          const events = buffer.split("\n\n");
+          buffer = events.pop();
+          for (const ev of events) {
+            const line = ev.replace(/^data: /, "");
+            if (!line) continue;
+            const [level, ...rest] = line.split("|");
+            const msg = rest.join("|");
+            const el = document.createElement("span");
+            el.className = `terminal-line ${level}`;
+            el.textContent = msg;
+            term.appendChild(el);
+            term.appendChild(document.createTextNode("\n"));
+            term.scrollTop = term.scrollHeight;
+            if (level === "done") {
+              setTimeout(showDeployedState, 800);
+            }
+          }
+        }
+      } catch (e) {
+        const el = document.createElement("span");
+        el.className = "terminal-line";
+        el.style.color = "#F87171";
+        el.textContent = "Error: " + e.message;
+        term.appendChild(el);
+      }
+    }
+
+    function showDeployedState() {
+      const body = document.getElementById("result-modal-body");
+      const footer = document.getElementById("result-modal-footer");
+      document.getElementById("result-modal-title").textContent = "Server Deployed";
+
+      const routes = (window._lastCompose?.network?.http_routes || []);
+      const urls = routes.map(r => {
+        const app = APPS.find(a => a.id === r.application);
+        return `<div class="url-card">
+          <div>
+            <div class="url-card-app">${app ? app.display_name : r.application}</div>
+            <div class="url-card-url">${r.url}</div>
+          </div>
+          <button class="btn btn-secondary" style="padding:4px 10px; font-size:11px;" onclick="copyText('${r.url}')">Copy URL</button>
+        </div>`;
+      }).join("");
+
+      body.innerHTML = `
+        <div class="deployed-state">
+          <div class="deployed-icon">✓</div>
+          <div class="deployed-title">Server deployed!</div>
+          <div class="deployed-subtitle">${state.selected.length} application${state.selected.length !== 1 ? 's' : ''} are up and running.</div>
+        </div>
+        <div>
+          <h3 style="font-size:14px; font-weight:600; margin-bottom:10px;">Your Applications</h3>
+          ${urls || '<div class="field-help">No HTTP apps installed. Native CLI tools are available on the server via SSH.</div>'}
+        </div>
+      `;
+
+      footer.innerHTML = `
+        <button class="btn btn-secondary" onclick="startOver()">Start over</button>
+        <button class="btn btn-primary" style="width:auto;" onclick="closeModal('result-modal')">Done</button>
+      `;
+    }
+
+    function copyText(t) {
+      navigator.clipboard.writeText(t);
+    }
+
+    function startOver() {
+      clearSelection();
+      state.baseDomain = "";
+      state.useForAll = { email: "", password: "" };
+      closeModal("result-modal");
+    }
+
+    // ---- Init ----
+    loadCatalogue();
+  </script>
+</body>
+</html>

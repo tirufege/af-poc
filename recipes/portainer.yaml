@@ -1,0 +1,27 @@
+id: portainer
+name: portainer
+display_name: Portainer
+description: Docker container management UI
+categories: [infrastructure]
+app_version: 2.25.1
+recipe_type: docker-compose
+upstream_url: https://www.portainer.io
+app_min_ram_mb: 512
+app_min_disk_mb: 10240
+supported_os: [ubuntu-26.04]
+incompatible_with_apps: []
+parameters:
+  - name: APP_DOMAIN
+    display_name: Domain
+    type: domain
+    required: true
+    description: Domain for Portainer UI
+ports:
+  - port: 9443
+    protocol: tcp
+    public: true
+    description: Portainer Web UI (HTTPS)
+  - port: 8000
+    protocol: tcp
+    public: false
+    description: Portainer Edge Agent

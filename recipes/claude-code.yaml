@@ -1,0 +1,19 @@
+id: claude-code
+name: claude-code
+display_name: Claude Code
+description: Anthropic's AI coding assistant CLI
+categories: [ai, developer-tools]
+app_version: 1.0.0
+recipe_type: native
+upstream_url: https://claude.ai/code
+app_min_ram_mb: 2048
+app_min_disk_mb: 10240
+supported_os: [ubuntu-26.04]
+incompatible_with_apps: []
+parameters:
+  - name: ANTHROPIC_API_KEY
+    display_name: Anthropic API Key
+    type: password
+    required: false
+    description: Anthropic API key (optional, can be set later)
+ports: []

@@ -1,0 +1,19 @@
+id: gemini-cli
+name: gemini-cli
+display_name: Gemini CLI
+description: Google Gemini AI assistant CLI
+categories: [ai, developer-tools]
+app_version: 1.0.0
+recipe_type: native
+upstream_url: https://github.com/google-gemini/gemini-cli
+app_min_ram_mb: 1024
+app_min_disk_mb: 5120
+supported_os: [ubuntu-26.04]
+incompatible_with_apps: []
+parameters:
+  - name: GEMINI_API_KEY
+    display_name: Gemini API Key
+    type: password
+    required: false
+    description: Google Gemini API key (optional, can be set later)
+ports: []
