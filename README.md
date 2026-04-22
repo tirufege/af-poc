@@ -10,7 +10,7 @@ Shows the full AF user journey: app selection → parameter config → cloud-ini
 git clone https://github.com/tirufege/af-poc.git
 cd af-poc
 pip install -r requirements.txt
-python app.py
+python3 app.py
 ```
 
 Open http://localhost:5050
@@ -37,7 +37,7 @@ DEV_MODE=true uvicorn app.main:app --port 8000
 # Terminal 2 — af-poc
 cd af-poc
 pip install -r requirements.txt
-python app.py
+python3 app.py
 ```
 
 Open http://localhost:5050
@@ -46,7 +46,7 @@ The PoC auto-detects whether af-api is running:
 - **af-api reachable** → proxies `/api/catalogue` and `/api/compose` to `http://localhost:8000/api/v1/`
 - **af-api not running** → falls back to built-in mock (local YAML recipes)
 
-Override the API URL: `AF_API_URL=http://other-host:8000/api/v1 python app.py`
+Override the API URL: `AF_API_URL=http://other-host:8000/api/v1 python3 app.py`
 
 > **Note:** af-api loads recipes from `../af-recipes/recipes` by default. Both repos must be cloned as siblings.
 
